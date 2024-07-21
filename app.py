@@ -3,10 +3,14 @@ import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import LabelEncoder, StandardScaler
+from flask import Flask, request, jsonify
+import joblib
+
 
 # Fungsi untuk memuat dan mempersiapkan model
 def load_model():
     df = pd.read_csv('transactions.csv')
+    model = joblib.load('best_model.pkl')
     df = df.dropna()
     label_encoder = LabelEncoder()
     df['Sender Name'] = label_encoder.fit_transform(df['Sender Name'])
