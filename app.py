@@ -1,59 +1,31 @@
+# app.py
 import streamlit as st
-import joblib
-import streamlit as st
-import numpy as np
+import pickle
 import pandas as pd
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 
-# Fungsi untuk memuat dan mempersiapkan model
-def load_model():
-    try:
-        model = joblib.load('best_model.pkl')
-        return model
-    except Exception as e:
-        st.error(f"Terjadi kesalahan saat memuat model: {e}")
-        return None
-    df = pd.read_csv('transactions.csv')
-    df = df.dropna()
-    label_encoder = LabelEncoder()
-    df['Sender Name'] = label_encoder.fit_transform(df['Sender Name'])
-    df['Receiver Name'] = label_encoder.fit_transform(df['Receiver Name'])
-    df['Sender UPI ID'] = label_encoder.fit_transform(df['Sender UPI ID'])
-    df['Receiver UPI ID'] = label_encoder.fit_transform(df['Receiver UPI ID'])
-    df['status'] = label_encoder.fit_transform(df['status'])
-    X = df.drop('status', axis=1)
-    y = df['status']
-    scaler = StandardScaler()
-    X = scaler.fit_transform(X)
-    model = LogisticRegression()
-    model.fit(X, y)
-    return model, scaler, label_encoder
+# Load model
+with open('best_model.pkl', 'rb') as file:
+    model = pickle.load(file)
 
-model, scaler, label_encoder = load_model()
+# Load encoder dan scaler
+le = LabelEncoder()
+le.classes_ = ['Merchant_Type_A', 'Merchant_Type_B', 'Merchant_Type_C']  # Contoh classes
+scaler = StandardScaler()
 
-st.title('Prediksi Status Transaksi')
+# Aplikasi Streamlit
+st.title("Prediksi Transaksi UPI Payment")
+st.write("Masukkan data transaksi untuk prediksi:")
 
-# Input user
-sender_name = st.text_input('Nama Pengirim')
-sender_upi = st.text_input('UPI ID Pengirim')
-receiver_name = st.text_input('Nama Penerima')
-receiver_upi = st.text_input('UPI ID Penerima')
-amount = st.number_input('Jumlah (INR)', min_value=0)
+# Input pengguna
+transaction_amount = st.number_input("Jumlah Transaksi")
+merchant_type = st.selectbox("Tipe Merchant", options=le.classes_)
 
-if st.button('Prediksi'):
-    data = np.array([[
-        sender_name,
-        sender_upi,
-        receiver_name,
-        receiver_upi,
-        amount
-    ]])
-    data[:, 0] = label_encoder.transform(data[:, 0])
-    data[:, 2] = label_encoder.transform(data[:, 2])
-    data[:, 1] = label_encoder.transform(data[:, 1])
-    data[:, 3] = label_encoder.transform(data[:, 3])
-    data = scaler.transform(data)
-    prediction = model.predict(data)
-    st.write(f'Status Transaksi: {"Berhasil" if prediction[0] == 1 else "Gagal"}')
+# Preprocessing input
+merchant_type_encoded = le.transform([merchant_type])
+transaction_amount_scaled = scaler.fit_transform([[transaction_amount]])
 
+# Prediksi
+if st.button("Prediksi"):
+    prediction = model.predict([[transaction_amount_scaled[0][0], merchant_type_encoded[0]]])
+    st.write(f"Prediksi: {'Fraud' if prediction == 1 else 'Non-Fraud'}")
