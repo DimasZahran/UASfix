@@ -1,21 +1,32 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import numpy as np
 
-# Coba memuat model dan tangani kesalahan
-try:
-    model = joblib.load('best_model.pkl')
-except Exception as e:
-    st.error(f"Terjadi kesalahan saat memuat model: {e}")
+# Fungsi untuk memuat model
+def load_model():
+    try:
+        model = joblib.load('best_model.pkl')
+        return model
+    except Exception as e:
+        st.error(f"Terjadi kesalahan saat memuat model: {e}")
+        return None
 
-# Jika model berhasil dimuat, lanjutkan dengan aplikasi
-if 'model' in locals():
+# Load model
+model = load_model()
+
+# Jika model berhasil dimuat, tampilkan antarmuka aplikasi
+if model:
     st.title('Prediksi Status Transaksi')
-    amount = st.number_input('Jumlah Transaksi (INR)', min_value=0)
-    
+
+    # Input jumlah transaksi
+    amount = st.number_input('Jumlah Transaksi (INR)', min_value=0.0, format='%f')
+
     if st.button('Prediksi'):
         try:
-            prediction = model.predict([[amount]])
-            st.write('Prediksi Status:', 'Berhasil' if prediction[0] == 1 else 'Gagal')
+            # Lakukan prediksi
+            prediction = model.predict(np.array([[amount]]))
+            status = 'Berhasil' if prediction[0] == 1 else 'Gagal'
+            st.write('Prediksi Status:', status)
         except Exception as e:
             st.error(f"Terjadi kesalahan saat melakukan prediksi: {e}")
