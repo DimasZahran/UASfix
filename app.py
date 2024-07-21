@@ -6,7 +6,7 @@ from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 # Fungsi untuk memuat dan mempersiapkan model
 def load_model():
-    df = pd.read_csv('transaction.csv')
+    df = pd.read_csv('transactions.csv')
     df = df.dropna()
     label_encoder = LabelEncoder()
     df['Sender Name'] = label_encoder.fit_transform(df['Sender Name'])
