@@ -5,7 +5,11 @@ import joblib
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 # Memuat model yang disimpan
-best_model = joblib.load('best_model.pkl')
+try:
+    best_model = joblib.load('best_model.pkl')
+except Exception as e:
+    st.error(f"Error loading model: {e}")
+    st.stop()
 
 # Memuat dataset untuk mendapatkan informasi prapemrosesan
 df = pd.read_csv('transactions.csv')
