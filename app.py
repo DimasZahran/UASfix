@@ -14,10 +14,6 @@ except Exception as e:
 # Memuat dataset untuk mendapatkan informasi prapemrosesan
 df = pd.read_csv('transactions.csv')
 
-# Menampilkan versi Streamlit dan Scikit-learn
-st.write(f"Streamlit version: {st.__version__}")
-import sklearn
-st.write(f"Scikit-learn version: {sklearn.__version__}")
 
 # Menyederhanakan fitur numerik
 scaler = StandardScaler()
