@@ -12,7 +12,7 @@ except Exception as e:
     st.stop()
 
 # Memuat dataset untuk mendapatkan informasi prapemrosesan
-df = pd.read_csv('/mnt/data/UPI_Payment_Transactions.csv')
+df = pd.read_csv('transactions.csv')
 
 # Menyederhanakan fitur numerik
 scaler = StandardScaler()
