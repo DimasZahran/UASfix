@@ -1,6 +1,17 @@
 import streamlit as st
 import joblib
 import numpy as np
+import os
+
+
+model_path = os.path.join('/mount/src/uasfix/app.py', 'best_model.pkl')
+print(f"Attempting to load model from: {model_path}")
+
+if os.path.isfile(model_path):
+    print(f"File {model_path} found.")
+else:
+    print(f"File {model_path} does not exist.")
+    # Tentukan jalur file yang benar atau periksa lokasi file di server
 
 def load_model():
     model = joblib.load('best_model.pkl')
@@ -27,3 +38,6 @@ if st.button('Prediksi'):
     data = scaler.transform(data)
     prediction = model.predict(data)
     st.write(f'Status Transaksi: {"Berhasil" if prediction[0] == 1 else "Gagal"}')
+
+if __name__ == "__main__":
+    main()
