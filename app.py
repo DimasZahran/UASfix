@@ -6,13 +6,18 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder
 
 # Memuat model yang disimpan
 try:
-    best_model = joblib.load('best_model.pkl')
+    best_model = joblib.load('/mnt/data/best_model.pkl')
 except Exception as e:
     st.error(f"Error loading model: {e}")
     st.stop()
 
 # Memuat dataset untuk mendapatkan informasi prapemrosesan
-df = pd.read_csv('transactions.csv')
+df = pd.read_csv('/mnt/data/UPI_Payment_Transactions.csv')
+
+# Menampilkan versi Streamlit dan Scikit-learn
+st.write(f"Streamlit version: {st.__version__}")
+import sklearn
+st.write(f"Scikit-learn version: {sklearn.__version__}")
 
 # Menyederhanakan fitur numerik
 scaler = StandardScaler()
